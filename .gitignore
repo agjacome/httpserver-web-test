@@ -1,0 +1,27 @@
+### Java ###
+*.class
+*.jar
+hs_err_pid*
+
+### Maven ###
+target
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+
+### Gradle ###
+.gradle
+build/
+
+### Intellij ###
+*.iws
+.idea
+
+### Eclipse ###
+.settings
+.project
+.classpath
+
+### General ###
+*.tmp
+*.bak
+*.swp
