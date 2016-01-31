@@ -3,14 +3,14 @@ package com.github.agjacome.httpserver.model.repository;
 import java.util.Collection;
 import java.util.Comparator;
 
-public interface ResultBuilder<A> {
+public interface ResultBuilder<E, C extends Collection<E>> {
 
-    public ResultBuilder<A> withPageSize(final int pageSize);
+    public ResultBuilder<E, C> withPageSize(final int pageSize);
 
-    public ResultBuilder<A> withPageNumber(final int pageNumber);
+    public ResultBuilder<E, C> withPageNumber(final int pageNumber);
 
-    public ResultBuilder<A> orderedBy(final Comparator<A> comparator);
+    public ResultBuilder<E, C> orderedBy(final Comparator<E> comparator);
 
-    public Collection<A> build();
+    public C build();
 
 }

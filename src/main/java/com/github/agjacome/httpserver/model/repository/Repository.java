@@ -1,5 +1,6 @@
 package com.github.agjacome.httpserver.model.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -10,7 +11,7 @@ public interface Repository<I, E extends Entity<I>> {
 
     public Optional<E> get(final I id) throws RepositoryException;
 
-    public ResultBuilder<E> search(final Predicate<E> query) throws RepositoryException;
+    public ResultBuilder<E, List<E>> search(final Predicate<E> query) throws RepositoryException;
 
     public int count(final Predicate<E> query) throws RepositoryException;
 
@@ -27,7 +28,7 @@ public interface Repository<I, E extends Entity<I>> {
               .orElseGet(() -> create(entity));
     }
 
-    public default ResultBuilder<E> list() throws RepositoryException {
+    public default ResultBuilder<E, List<E>> list() throws RepositoryException {
         return search(e -> true);
     }
 
