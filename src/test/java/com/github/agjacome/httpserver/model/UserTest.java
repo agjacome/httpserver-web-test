@@ -4,14 +4,15 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import org.junit.Test;
+import org.junit.contrib.theories.Theories;
+import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
 import com.github.agjacome.httpserver.model.User.Role;
 import com.github.agjacome.httpserver.util.CaseInsensitiveString;
 import com.github.agjacome.httpserver.util.PasswordVerifier;
-import com.pholser.junit.quickcheck.Property;
+import com.pholser.junit.quickcheck.ForAll;
 import com.pholser.junit.quickcheck.generator.ValuesOf;
-import com.pholser.junit.quickcheck.runner.JUnitQuickcheck;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -23,10 +24,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import static com.github.agjacome.httpserver.model.User.Role.PAGE_1;
-import static com.github.agjacome.httpserver.model.UserArguments.*;
+import static com.github.agjacome.httpserver.test.dataset.UserArguments.*;
 import static com.github.agjacome.httpserver.util.CaseInsensitiveString.uncased;
 
-@RunWith(JUnitQuickcheck.class)
+@RunWith(Theories.class)
 public class UserTest {
 
     @Test
@@ -47,17 +48,19 @@ public class UserTest {
             .isThrownBy(() -> new User(anUsername(), aPasswordVerifier(), null));
     }
 
-    @Property
-    public void get_id_returns_case_insensitive_username(final String string) {
+    @Theory
+    public void get_id_returns_case_insensitive_username(
+        @ForAll final String string
+    ) {
         final CaseInsensitiveString username = uncased(string);
 
         final User user = new User(username, aPasswordVerifier(), aRoleSet());
         assertThat(user.getId()).isEqualTo(username);
     }
 
-    @Property
+    @Theory
     public void get_username_must_return_original_cased_string(
-        final String string
+        @ForAll final String string
     ) {
         final CaseInsensitiveString username = uncased(string);
 
@@ -65,9 +68,10 @@ public class UserTest {
         assertThat(user.getUsername()).isEqualTo(string);
     }
 
-    @Property
+    @Theory
     public void check_password_must_delegate_to_password_verifier(
-        final String plainPass, @ValuesOf final boolean validPass
+        @ForAll final String plainPass,
+        @ForAll @ValuesOf final boolean validPass
     ) {
         final PasswordVerifier mockedPass = mock(PasswordVerifier.class);
         final User user = new User(anUsername(), mockedPass, aRoleSet());
@@ -96,8 +100,10 @@ public class UserTest {
         assertThat(user.checkPassword(invalidPassword())).isFalse();
     }
 
-    @Property
-    public void get_roles_must_return_immutable_set(final Set<Role> roles) {
+    @Theory
+    public void get_roles_must_return_immutable_set(
+        @ForAll final Set<Role> roles
+    ) {
         final User user = new User(anUsername(), aPasswordVerifier(), roles);
 
         assertThatExceptionOfType(UnsupportedOperationException.class)
@@ -107,9 +113,10 @@ public class UserTest {
             .isThrownBy(() -> user.getRoles().remove(PAGE_1));
     }
 
-    @Property
+    @Theory
     public void has_role_must_delegate_on_role_set(
-        @ValuesOf final Role role, @ValuesOf final boolean containsRole
+        @ForAll @ValuesOf final Role    role,
+        @ForAll @ValuesOf final boolean containsRole
     ) {
         @SuppressWarnings("unchecked")
         final Set<Role> mockedSet = mock(Set.class);
@@ -156,9 +163,9 @@ public class UserTest {
             .suppress(Warning.NULL_FIELDS).verify();
     }
 
-    @Property
+    @Theory
     public void to_string_must_return_string_representation_with_username_and_roles(
-        final String username, final Set<Role> roles
+        @ForAll final String username, @ForAll final Set<Role> roles
     ) {
         final User user = new User(uncased(username), aPasswordVerifier(), roles);
 

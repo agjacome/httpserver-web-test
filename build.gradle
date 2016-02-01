@@ -22,11 +22,13 @@ dependencies {
   compile 'com.github.jeremyh:jBCrypt:jbcrypt-0.4'
 
   testCompile 'junit:junit:4.12'
-  testCompile 'com.pholser:junit-quickcheck-core:0.6-beta-1'
-  testCompile 'com.pholser:junit-quickcheck-generators:0.6-beta-1'
-  testCompile 'nl.jqno.equalsverifier:equalsverifier:1.7.+'
-  testCompile 'org.mockito:mockito-core:1.10.+'
+  testCompile 'com.pholser:junit-quickcheck-core:0.5'
+  testCompile 'com.pholser:junit-quickcheck-generators:0.5'
+
   testCompile 'org.assertj:assertj-core:3.3.+'
+  testCompile 'nl.jqno.equalsverifier:equalsverifier:1.7.+'
+
+  testCompile 'org.mockito:mockito-core:1.10.+'
 }
 
 jacocoTestReport {

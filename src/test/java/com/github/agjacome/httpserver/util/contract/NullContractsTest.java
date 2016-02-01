@@ -2,10 +2,11 @@ package com.github.agjacome.httpserver.util.contract;
 
 import java.util.Arrays;
 
+import org.junit.contrib.theories.Theories;
+import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
-import com.pholser.junit.quickcheck.Property;
-import com.pholser.junit.quickcheck.runner.JUnitQuickcheck;
+import com.pholser.junit.quickcheck.ForAll;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -16,12 +17,12 @@ import static org.junit.Assume.assumeThat;
 
 import static com.github.agjacome.httpserver.util.contract.NullContracts.requireAllNonNull;
 
-@RunWith(JUnitQuickcheck.class)
+@RunWith(Theories.class)
 public class NullContractsTest {
 
-    @Property
-    public <A> void require_all_non_null_must_throw_exception_on_any_null(
-        final A[ ] values
+    @Theory
+    public void require_all_non_null_must_throw_exception_on_any_null(
+        @ForAll final Object[ ] values
     ) {
         assumeThat(Arrays.asList(values), hasItem(nullValue()));
 
@@ -32,9 +33,9 @@ public class NullContractsTest {
             .isThrownBy(() -> requireAllNonNull(values, "test"));
     }
 
-    @Property
-    public <A> void require_all_non_null_must_given_values_if_none_is_null(
-        final A[ ] values
+    @Theory
+    public void require_all_non_null_must_given_values_if_none_is_null(
+        @ForAll final Object[ ] values
     ) {
         assumeNotNull(values);
 
@@ -42,9 +43,9 @@ public class NullContractsTest {
         assertThat(requireAllNonNull(values, "test")).containsExactly(values);
     }
 
-    @Property
-    public <A> void require_all_non_null_thrown_exception_must_have_given_formatted_message(
-        final A[ ] values, final String message
+    @Theory
+    public void require_all_non_null_thrown_exception_must_have_given_formatted_message(
+        @ForAll final Object[ ] values, @ForAll final String message
     ) {
         assumeThat(Arrays.asList(values), hasItem(nullValue()));
 
@@ -53,9 +54,9 @@ public class NullContractsTest {
             .withMessage(String.format("MSG: %s", message));
     }
 
-    @Property
-    public <A> void require_all_non_null_thrown_exception_must_have_default_message_if_none_given(
-        final A[ ] values
+    @Theory
+    public void require_all_non_null_thrown_exception_must_have_default_message_if_none_given(
+        @ForAll final Object[ ] values
     ) {
         assumeThat(Arrays.asList(values), hasItem(nullValue()));
 

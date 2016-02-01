@@ -1,11 +1,14 @@
 package com.github.agjacome.httpserver.util;
 
 import org.junit.Test;
+import org.junit.contrib.theories.Theories;
+import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
-import com.pholser.junit.quickcheck.Property;
+import com.pholser.junit.quickcheck.ForAll;
+import com.pholser.junit.quickcheck.From;
+import com.pholser.junit.quickcheck.generator.java.lang.Encoded;
 import com.pholser.junit.quickcheck.generator.java.lang.Encoded.InCharset;
-import com.pholser.junit.quickcheck.runner.JUnitQuickcheck;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -15,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import static com.github.agjacome.httpserver.util.CaseInsensitiveString.uncased;
 
-@RunWith(JUnitQuickcheck.class)
+@RunWith(Theories.class)
 public class CaseInsensitiveStringTest {
 
     @Test
@@ -24,16 +27,16 @@ public class CaseInsensitiveStringTest {
             .isThrownBy(() -> uncased(null));
     }
 
-    @Property
+    @Theory
     public void get_original_must_return_the_original_string(
-        final String string
+        @ForAll final String string
     ) {
         assertThat(uncased(string).getOriginal()).isEqualTo(string);
     }
 
-    @Property
+    @Theory
     public void equals_must_ignore_case(
-        @InCharset("US-ASCII") final String string
+        @ForAll @From(Encoded.class) @InCharset("US-ASCII") final String string
     ) {
         final CaseInsensitiveString uppercased = uncased(string.toUpperCase());
         final CaseInsensitiveString lowercased = uncased(string.toLowerCase());
@@ -43,9 +46,9 @@ public class CaseInsensitiveStringTest {
 
     }
 
-    @Property
+    @Theory
     public void hashcode_must_ignore_case(
-        @InCharset("US-ASCII") final String string
+        @ForAll @From(Encoded.class) @InCharset("US-ASCII") final String string
     ) {
         final CaseInsensitiveString uppercased = uncased(string.toUpperCase());
         final CaseInsensitiveString lowercased = uncased(string.toLowerCase());
@@ -54,17 +57,18 @@ public class CaseInsensitiveStringTest {
         assertThat(uncased(string).hashCode()).isEqualTo(lowercased.hashCode());
     }
 
-    @Property
+    @Theory
     public void compare_to_must_ignore_case(
-        final String string1, final String string2
+        @ForAll final String string1,
+        @ForAll final String string2
     ) {
         assertThat(uncased(string1).compareTo(uncased(string2)))
             .isEqualTo(string1.compareToIgnoreCase(string2));
     }
 
-    @Property
+    @Theory
     public void compare_to_must_respect_case_insensitive_equality(
-        @InCharset("US-ASCII") final String string
+        @ForAll @From(Encoded.class) @InCharset("US-ASCII") final String string
     ) {
         final CaseInsensitiveString uppercased = uncased(string.toUpperCase());
         final CaseInsensitiveString lowercased = uncased(string.toLowerCase());
@@ -73,17 +77,17 @@ public class CaseInsensitiveStringTest {
         assertThat(uncased(string)).isEqualByComparingTo(uppercased);
     }
 
-    @Property
-    public void to_string_must_return_original_string_lowercased(
-        final String string
-    ) {
-        assertThat(uncased(string)).hasToString(string.toLowerCase());
-    }
-
     @Test
     public void equals_and_hashcode_contracts_must_be_satisfied() {
         EqualsVerifier.forClass(CaseInsensitiveString.class)
             .suppress(Warning.NULL_FIELDS).verify();
+    }
+
+    @Theory
+    public void to_string_must_return_original_string_lowercased(
+        @ForAll final String string
+    ) {
+        assertThat(uncased(string)).hasToString(string.toLowerCase());
     }
 
 }

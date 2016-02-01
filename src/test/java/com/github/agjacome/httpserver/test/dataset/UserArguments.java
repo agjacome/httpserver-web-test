@@ -1,7 +1,8 @@
-package com.github.agjacome.httpserver.model;
+package com.github.agjacome.httpserver.test.dataset;
 
 import java.util.Set;
 
+import com.github.agjacome.httpserver.model.User;
 import com.github.agjacome.httpserver.model.User.Role;
 import com.github.agjacome.httpserver.util.Arrays;
 import com.github.agjacome.httpserver.util.CaseInsensitiveString;
@@ -11,6 +12,7 @@ import com.github.agjacome.httpserver.util.annotation.DisallowConstruction;
 import static com.github.agjacome.httpserver.model.User.Role.ADMIN;
 import static com.github.agjacome.httpserver.model.User.Role.PAGE_1;
 import static com.github.agjacome.httpserver.model.User.Role.PAGE_2;
+import static com.github.agjacome.httpserver.model.User.Role.PAGE_3;
 import static com.github.agjacome.httpserver.util.CaseInsensitiveString.uncased;
 
 public final class UserArguments {
@@ -30,24 +32,14 @@ public final class UserArguments {
         return "password"::equals;
     }
 
-    public static String validPassword() {
-        return "password";
-    }
-
-    public static String invalidPassword() {
-        return "incorrectPassword";
-    }
+    public static String validPassword()   { return "password";          }
+    public static String invalidPassword() { return "incorrectPassword"; }
 
     public static Set<Role> aRoleSet() {
-        return Arrays.asSet(ADMIN, PAGE_2);
+        return Arrays.asSet(ADMIN, PAGE_2, PAGE_3);
     }
 
-    public static Role anIncludedRole() {
-        return ADMIN;
-    }
-
-    public static Role aNotIncludedRole() {
-        return PAGE_1;
-    }
+    public static Role anIncludedRole()   { return ADMIN;  }
+    public static Role aNotIncludedRole() { return PAGE_1; }
 
 }

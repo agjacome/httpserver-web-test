@@ -1,13 +1,15 @@
 package com.github.agjacome.httpserver.util;
 
 import org.junit.Test;
+import org.junit.contrib.theories.Theories;
+import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 import org.mindrot.BCrypt;
 
-import com.pholser.junit.quickcheck.Property;
-import com.pholser.junit.quickcheck.runner.JUnitQuickcheck;
+import com.pholser.junit.quickcheck.ForAll;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -15,9 +17,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assume.assumeThat;
 
-import static nl.jqno.equalsverifier.Warning.NULL_FIELDS;
-
-@RunWith(JUnitQuickcheck.class)
+@RunWith(Theories.class)
 public class BCryptPasswordTest {
 
     private String hash(final String password) {
@@ -30,9 +30,9 @@ public class BCryptPasswordTest {
             .isThrownBy(() -> BCryptPassword.of(null));
     }
 
-    @Property
+    @Theory
     public void of_must_throw_exception_on_invalid_length(
-        final String string
+        @ForAll final String string
     ) {
         assumeThat(string.length(), is(not(60)));
 
@@ -46,17 +46,18 @@ public class BCryptPasswordTest {
             .isThrownBy(() -> BCryptPassword.encrypt(null));
     }
 
-    @Property
+    @Theory
     public void verify_should_return_true_on_valid_password(
-        final String password
+        @ForAll(sampleSize = 10) final String password
     ) {
         assertThat(BCryptPassword.encrypt(password).verify(password)).isTrue();
         assertThat(BCryptPassword.of(hash(password)).verify(password)).isTrue();
     }
 
-    @Property
+    @Theory
     public void verify_should_return_false_on_invalid_password(
-        final String password, final String invalid
+        @ForAll(sampleSize = 10) final String password,
+        @ForAll(sampleSize =  2) final String invalid
     ) {
         assumeThat(password, is(not(invalid)));
 
@@ -67,16 +68,15 @@ public class BCryptPasswordTest {
     @Test
     public void equals_and_hashcode_contracts_must_be_satisfied() {
         EqualsVerifier.forClass(BCryptPassword.class)
-            .suppress(NULL_FIELDS).verify();
+            .suppress(Warning.NULL_FIELDS).verify();
     }
 
-    @Property
+    @Theory
     public void to_string_should_always_return_asterisks(
-        final String password
+        @ForAll(sampleSize = 10) final String password
     ) {
         assertThat(BCryptPassword.encrypt(password)).hasToString("***");
         assertThat(BCryptPassword.of(hash(password))).hasToString("***");
     }
-
 
 }
