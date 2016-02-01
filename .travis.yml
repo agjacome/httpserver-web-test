@@ -2,4 +2,4 @@ language: java
 
 jdk: oraclejdk8
 
-script: ./gradlew build check --debug # --stacktrace --info
+script: ./gradlew build check --stacktrace --info
