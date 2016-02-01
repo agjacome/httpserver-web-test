@@ -53,8 +53,8 @@ public class StreamResultBuilderTest {
 
     @Theory(nullsAccepted = false)
     public void with_page_size_must_throw_exception_on_negative(
-        @ForAll final Collection<Object> elements,
-        @ForAll @InRange(max = "-1") final int pageSize
+        @ForAll(sampleSize = 5) final Collection<Object> elements,
+        @ForAll(sampleSize = 5) @InRange(max = "-1") final int pageSize
     ) {
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> builder(elements).withPageSize(pageSize));
@@ -62,8 +62,8 @@ public class StreamResultBuilderTest {
 
     @Theory(nullsAccepted = false)
     public void with_page_size_must_alter_size_of_result(
-        @ForAll @Size(min = 20, max = 50) final Collection<Object> elements,
-        @ForAll @InRange(min = "0", max = "20") final int pageSize
+        @ForAll(sampleSize = 5) @Size(min = 30, max = 50) final List<Object> elements,
+        @ForAll(sampleSize = 5) @InRange(min = "0", max = "20") final int pageSize
     ) {
         final List<Object> result = builder(elements).withPageSize(pageSize).build();
         assertThat(result).hasSize(pageSize);
@@ -71,8 +71,8 @@ public class StreamResultBuilderTest {
 
     @Theory(nullsAccepted = false)
     public void with_page_numer_must_throw_exception_on_non_positive(
-        @ForAll final Collection<Object> elements,
-        @ForAll @InRange(max = "0") final int pageNumber
+        @ForAll(sampleSize = 5) final Collection<Object> elements,
+        @ForAll(sampleSize = 5) @InRange(max = "0") final int pageNumber
     ) {
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> builder(elements).withPageNumber(pageNumber));
@@ -80,8 +80,8 @@ public class StreamResultBuilderTest {
 
     @Theory(nullsAccepted = false)
     public void with_page_number_must_alter_page_of_result(
-        @ForAll @Size(min = 20, max = 50) final List<Object> elements,
-        @ForAll @InRange(min = "1", max = "5") final int pageNumber
+        @ForAll(sampleSize = 5) @Size(min = 30, max = 50) final List<Object> elements,
+        @ForAll(sampleSize = 5) @InRange(min = "1", max = "5") final int pageNumber
     ) {
         final int pageSize = 4;
 

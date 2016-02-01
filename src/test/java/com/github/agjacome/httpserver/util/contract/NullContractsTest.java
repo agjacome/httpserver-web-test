@@ -45,7 +45,8 @@ public class NullContractsTest {
 
     @Theory
     public void require_all_non_null_thrown_exception_must_have_given_formatted_message(
-        @ForAll final Object[ ] values, @ForAll final String message
+        @ForAll(sampleSize = 10) final Object[ ] values,
+        @ForAll(sampleSize =  2) final String message
     ) {
         assumeThat(Arrays.asList(values), hasItem(nullValue()));
 

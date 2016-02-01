@@ -5,7 +5,10 @@ import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
 import com.pholser.junit.quickcheck.ForAll;
+import com.pholser.junit.quickcheck.From;
 import com.pholser.junit.quickcheck.generator.InRange;
+import com.pholser.junit.quickcheck.generator.java.lang.Encoded;
+import com.pholser.junit.quickcheck.generator.java.lang.Encoded.InCharset;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -41,8 +44,8 @@ public class NumericContractsTest {
 
     @Theory
     public void require_non_negative_thrown_exception_must_have_given_formatted_message(
-        @ForAll @InRange(max = "-1") final int number,
-        @ForAll final String message
+        @ForAll(sampleSize = 10) @InRange(max = "-1") final int number,
+        @ForAll(sampleSize =  2) final String message
     ) {
         final String expectedMessage = String.format("MSG: %s", message);
 
@@ -85,8 +88,8 @@ public class NumericContractsTest {
 
     @Theory
     public void require_positive_thrown_exception_must_have_given_formatted_message(
-        @ForAll @InRange(max = "0") final int number,
-        @ForAll final String message
+        @ForAll(sampleSize = 10) @InRange(max = "0") final int number,
+        @ForAll(sampleSize =  2) final String message
     ) {
         final String expectedMessage = String.format("MSG: %s", message);
 
@@ -131,9 +134,9 @@ public class NumericContractsTest {
 
     @Theory
     public void require_equal_thrown_exception_must_have_given_formatted_message(
-        @ForAll final int    number1,
-        @ForAll final int    number2,
-        @ForAll final String message
+        @ForAll(sampleSize = 5) final int number1,
+        @ForAll(sampleSize = 5) final int number2,
+        @ForAll(sampleSize = 2) @From(Encoded.class) @InCharset("US-ASCII") final String message
     ) {
         assumeThat(number1, is(not(number2)));
 

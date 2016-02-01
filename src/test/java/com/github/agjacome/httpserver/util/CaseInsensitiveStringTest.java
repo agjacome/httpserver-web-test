@@ -59,8 +59,8 @@ public class CaseInsensitiveStringTest {
 
     @Theory
     public void compare_to_must_ignore_case(
-        @ForAll final String string1,
-        @ForAll final String string2
+        @ForAll(sampleSize = 10) final String string1,
+        @ForAll(sampleSize = 10) final String string2
     ) {
         assertThat(uncased(string1).compareTo(uncased(string2)))
             .isEqualTo(string1.compareToIgnoreCase(string2));

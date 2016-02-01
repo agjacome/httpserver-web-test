@@ -70,7 +70,7 @@ public class UserTest {
 
     @Theory
     public void check_password_must_delegate_to_password_verifier(
-        @ForAll final String plainPass,
+        @ForAll(sampleSize = 10) final String plainPass,
         @ForAll @ValuesOf final boolean validPass
     ) {
         final PasswordVerifier mockedPass = mock(PasswordVerifier.class);
@@ -165,7 +165,8 @@ public class UserTest {
 
     @Theory
     public void to_string_must_return_string_representation_with_username_and_roles(
-        @ForAll final String username, @ForAll final Set<Role> roles
+        @ForAll(sampleSize = 10) final String username,
+        @ForAll(sampleSize = 10) final Set<Role> roles
     ) {
         final User user = new User(uncased(username), aPasswordVerifier(), roles);
 

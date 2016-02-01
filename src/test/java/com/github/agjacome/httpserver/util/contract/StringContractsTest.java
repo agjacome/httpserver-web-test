@@ -58,7 +58,8 @@ public class StringContractsTest {
 
     @Theory
     public void require_extact_length_must_throw_exception_on_incorrect_lenght(
-        @ForAll final int length, @ForAll final String string
+        @ForAll(sampleSize = 5) final int length,
+        @ForAll(sampleSize = 5) final String string
     ) {
         assumeThat(string.length(), is(not(length)));
 
@@ -80,9 +81,9 @@ public class StringContractsTest {
 
     @Theory
     public void require_non_empty_thrown_exception_must_have_given_formatted_message(
-        @ForAll final int    length,
-        @ForAll final String string,
-        @ForAll final String message
+        @ForAll(sampleSize = 5) final int    length,
+        @ForAll(sampleSize = 5) final String string,
+        @ForAll(sampleSize = 2) final String message
     ) {
         assumeThat(string.length(), is(not(length)));
 
@@ -95,7 +96,8 @@ public class StringContractsTest {
 
     @Theory
     public void require_non_empty_thrown_exception_must_have_default_message_if_none_given(
-        @ForAll final int length, @ForAll final String string
+        @ForAll(sampleSize = 5) final int length,
+        @ForAll(sampleSize = 5) final String string
     ) {
         assumeThat(string.length(), is(not(length)));
 
