@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 import com.github.agjacome.httpserver.util.CaseInsensitiveString;
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 
 import static java.util.Collections.unmodifiableList;
@@ -18,7 +17,7 @@ import static java.util.stream.Collectors.joining;
 import static com.github.agjacome.httpserver.util.CaseInsensitiveString.uncased;
 import static com.github.agjacome.httpserver.util.contract.NullContracts.requireAllNonNull;
 
-public final class HttpHeader implements HttpExchangeMatcher, Iterable<String> {
+public final class HttpHeader implements HttpRequestMatcher, Iterable<String> {
 
     private final CaseInsensitiveString key;
     private final List<String>          values;
@@ -47,12 +46,8 @@ public final class HttpHeader implements HttpExchangeMatcher, Iterable<String> {
     }
 
     @Override
-    public boolean matches(final HttpExchange exchange) {
-        final String  header  = key.getOriginal();
-        final Headers headers = exchange.getRequestHeaders();
-
-        return headers.containsKey(header.toLowerCase())
-            || headers.containsKey(header.toUpperCase());
+    public boolean matches(final HttpRequest request) {
+        return request.getHeader(key).isPresent();
     }
 
     @Override

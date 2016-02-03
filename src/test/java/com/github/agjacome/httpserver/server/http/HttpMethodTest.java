@@ -11,7 +11,6 @@ import com.github.agjacome.httpserver.server.http.HttpMethod.StandardHttpMethod;
 import com.github.agjacome.httpserver.util.Arrays;
 import com.pholser.junit.quickcheck.ForAll;
 import com.pholser.junit.quickcheck.generator.ValuesOf;
-import com.sun.net.httpserver.HttpExchange;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeFalse;
@@ -59,29 +58,25 @@ public class HttpMethodTest {
     public void matches_must_match_on_correct_request_method(
         @ForAll @ValuesOf final StandardHttpMethod method
     ) {
-        final HttpExchange mockedExchange = mock(HttpExchange.class);
+        final HttpRequest mockedRequest = mock(HttpRequest.class);
+        when(mockedRequest.getMethod()).thenReturn(method);
 
-        when(mockedExchange.getRequestMethod()).thenReturn(method.getName());
-
-        assertThat(method.matches(mockedExchange)).isTrue();
-
-        verify(mockedExchange).getRequestMethod();
+        assertThat(method.matches(mockedRequest)).isTrue();
+        verify(mockedRequest).getMethod();
     }
 
     @Theory
     public void matches_must_not_match_on_incorrect_request_method(
-        @ForAll(sampleSize = 10) final String string,
-        @ForAll @ValuesOf final StandardHttpMethod method
+        @ForAll @ValuesOf final StandardHttpMethod method1,
+        @ForAll @ValuesOf final StandardHttpMethod method2
     ) {
-        assumeFalse(method.getName().equals(string));
+        assumeFalse(method1.equals(method2));
 
-        final HttpExchange mockedExchange = mock(HttpExchange.class);
+        final HttpRequest mockedRequest = mock(HttpRequest.class);
+        when(mockedRequest.getMethod()).thenReturn(method1);
 
-        when(mockedExchange.getRequestMethod()).thenReturn(string);
-
-        assertThat(method.matches(mockedExchange)).isFalse();
-
-        verify(mockedExchange).getRequestMethod();
+        assertThat(method2.matches(mockedRequest)).isFalse();
+        verify(mockedRequest).getMethod();
     }
 
 }

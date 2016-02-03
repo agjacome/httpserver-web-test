@@ -59,7 +59,7 @@ public class HttpExchangeRequestAdapter implements HttpRequest {
     }
 
     @Override
-    public Optional<HttpHeader> getHeader(final String key) {
+    public Optional<HttpHeader> getHeader(final CaseInsensitiveString key) {
         return Optional.ofNullable(headers.get(key));
     }
 

@@ -13,7 +13,7 @@ import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
-public final class HttpQueryParameter implements HttpExchangeMatcher, Iterable<String> {
+public final class HttpQueryParameter implements HttpRequestMatcher, Iterable<String> {
 
     private final String       key;
     private final List<String> values;
@@ -36,8 +36,8 @@ public final class HttpQueryParameter implements HttpExchangeMatcher, Iterable<S
     }
 
     @Override
-    public boolean matches(final HttpExchange exchange) {
-        return parseQueryParams(exchange).containsKey(key);
+    public boolean matches(final HttpRequest request) {
+        return request.getQueryParameter(key).isPresent();
     }
 
     @Override

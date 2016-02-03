@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Optional;
 
+import com.github.agjacome.httpserver.util.CaseInsensitiveString;
+
 public interface HttpRequest {
 
     public HttpMethod getMethod();
@@ -16,7 +18,7 @@ public interface HttpRequest {
 
     public HttpVersion getVersion();
 
-    public Optional<HttpHeader> getHeader(final String key);
+    public Optional<HttpHeader> getHeader(final CaseInsensitiveString key);
 
     public InputStream getBodyInputStream();
 

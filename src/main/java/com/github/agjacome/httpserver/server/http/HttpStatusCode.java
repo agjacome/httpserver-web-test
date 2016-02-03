@@ -5,12 +5,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import com.sun.net.httpserver.HttpExchange;
-
 import static java.util.stream.Collectors.toMap;
 
 // https://tools.ietf.org/html/rfc7231#section-6
-public interface HttpStatusCode extends HttpExchangeMatcher {
+public interface HttpStatusCode extends HttpResponseMatcher {
 
     public int getCode();
 
@@ -19,8 +17,8 @@ public interface HttpStatusCode extends HttpExchangeMatcher {
     public StatusClass getStatusClass();
 
     @Override
-    default boolean matches(final HttpExchange exchange) {
-        return getCode() == exchange.getResponseCode();
+    default boolean matches(final HttpResponse response) {
+        return response.getStatusCode().getCode() == getCode();
     }
 
 

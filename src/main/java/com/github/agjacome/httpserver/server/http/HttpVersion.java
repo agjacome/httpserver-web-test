@@ -4,14 +4,12 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.sun.net.httpserver.HttpExchange;
-
 import static java.util.Objects.isNull;
 
 import static com.github.agjacome.httpserver.server.http.HttpVersion.StandardHttpVersion.HTTP_0_9;
 
 // http://tools.ietf.org/html/rfc7230#section-2.6
-public interface HttpVersion extends HttpExchangeMatcher {
+public interface HttpVersion extends HttpRequestMatcher {
 
     public static HttpVersion parse(final String version) {
         // https://tools.ietf.org/html/rfc1945#section-3.1:
@@ -42,8 +40,9 @@ public interface HttpVersion extends HttpExchangeMatcher {
     }
 
     @Override
-    public default boolean matches(final HttpExchange exchange) {
-        return exchange.getProtocol().equals(getName());
+    public default boolean matches(final HttpRequest request) {
+        return request.getVersion().getMajor() == getMajor()
+            && request.getVersion().getMinor() == getMinor();
     }
 
 

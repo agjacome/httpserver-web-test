@@ -2,12 +2,10 @@ package com.github.agjacome.httpserver.server.http;
 
 import java.util.Optional;
 
-import com.sun.net.httpserver.HttpExchange;
-
 import static java.util.Objects.requireNonNull;
 
 @FunctionalInterface
-public interface HttpMethod extends HttpExchangeMatcher {
+public interface HttpMethod extends HttpRequestMatcher {
 
     public String getName();
 
@@ -20,8 +18,8 @@ public interface HttpMethod extends HttpExchangeMatcher {
     }
 
     @Override
-    public default boolean matches(final HttpExchange exchange) {
-        return exchange.getRequestMethod().equals(getName());
+    public default boolean matches(final HttpRequest request) {
+        return request.getMethod().getName().equals(getName());
     }
 
 
