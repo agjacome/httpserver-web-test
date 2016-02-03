@@ -14,8 +14,8 @@ import static com.github.agjacome.httpserver.server.http.HttpStatusCode.Standard
 
 public final class HttpExchangeResponseBuilder implements HttpResponseBuilder {
 
-    private long                                   length;
-    private HttpStatusCode                         code;
+    private long length;
+    private HttpStatusCode code;
     private Map<CaseInsensitiveString, HttpHeader> headers;
 
     private final HttpExchange exchange;

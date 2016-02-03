@@ -48,4 +48,26 @@ public final class StringContracts {
         );
     }
 
+    public static String requirePrefix(
+        final String     string,
+        final String     prefix,
+        final String     format,
+        final Object ... args
+    ) {
+        if (!string.startsWith(prefix))
+            throw new IllegalArgumentException(String.format(format, args));
+
+        return string;
+    }
+
+    public static String requirePrefix(
+        final String string, final String prefix
+    ) {
+        return requirePrefix(
+            string, prefix,
+            "Expected string starting with '%s', but '%s' given",
+            prefix, string
+        );
+    }
+
 }
