@@ -1,4 +1,4 @@
-package com.github.agjacome.httpserver.server;
+package com.github.agjacome.httpserver.server.http;
 
 import java.util.Optional;
 
@@ -6,22 +6,28 @@ import com.sun.net.httpserver.HttpExchange;
 
 import static java.util.Objects.requireNonNull;
 
-public interface HttpMethod {
+@FunctionalInterface
+public interface HttpMethod extends HttpExchangeMatcher {
 
     public String getName();
 
-    public boolean isIdempotent();
+    public default boolean isIdempotent() {
+        return false;
+    }
 
-    public boolean isSafe();
+    public default boolean isSafe() {
+        return false;
+    }
 
+    @Override
     public default boolean matches(final HttpExchange exchange) {
         return exchange.getRequestMethod().equals(getName());
     }
 
 
+    // https://www.iana.org/assignments/http-methods/http-methods.xhtml
     public static enum StandardHttpMethod implements HttpMethod {
 
-        // https://www.iana.org/assignments/http-methods/http-methods.xhtml
         ACL(false, true),
         BASELINE_CONTROL(false, true),
         BIND(false, true),

@@ -1,4 +1,4 @@
-package com.github.agjacome.httpserver.server;
+package com.github.agjacome.httpserver.server.http;
 
 import java.util.Set;
 
@@ -7,7 +7,7 @@ import org.junit.contrib.theories.Theories;
 import org.junit.contrib.theories.Theory;
 import org.junit.runner.RunWith;
 
-import com.github.agjacome.httpserver.server.HttpMethod.StandardHttpMethod;
+import com.github.agjacome.httpserver.server.http.HttpMethod.StandardHttpMethod;
 import com.github.agjacome.httpserver.util.Arrays;
 import com.pholser.junit.quickcheck.ForAll;
 import com.pholser.junit.quickcheck.generator.ValuesOf;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(Theories.class)
-public class StandardHttpMethodTest {
+public class HttpMethodTest {
 
     @DataPoints
     public static final Set<String> standardMethods = Arrays.asSet(
