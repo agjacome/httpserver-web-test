@@ -41,6 +41,12 @@ jacocoTestReport {
   }
 }
 
-// jar.manifest {
-  // attributes 'Main-Class': 'com.github.agjacome.httpserver.HelloWorld'
-// }
+jar {
+  manifest {
+    attributes 'Main-Class': 'com.github.agjacome.httpserver.Main'
+  }
+
+  from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+
