@@ -10,6 +10,6 @@ public interface Server {
 
     public Server onRun(final Consumer<Server> consumer);
 
-    public Observable<ServerRequest> observe();
+    public Observable<ServerRequest> requests();
 
 }

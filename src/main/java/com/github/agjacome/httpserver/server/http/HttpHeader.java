@@ -1,5 +1,6 @@
 package com.github.agjacome.httpserver.server.http;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,6 +40,12 @@ public final class HttpHeader implements HttpRequestMatcher, Iterable<String> {
     }
 
     public HttpHeader(
+        final CaseInsensitiveString key, final String ... values
+    ) {
+        this(key, Arrays.asList(values));
+    }
+
+    public HttpHeader(
         final CaseInsensitiveString key, final List<String> values
     ) {
         this.key    = requireNonNull(key);
@@ -47,7 +54,9 @@ public final class HttpHeader implements HttpRequestMatcher, Iterable<String> {
 
     @Override
     public boolean matches(final HttpRequest request) {
-        return request.getHeader(key).isPresent();
+        return request.getHeader(key)
+              .filter(that -> that.values.containsAll(this.values))
+              .isPresent();
     }
 
     @Override

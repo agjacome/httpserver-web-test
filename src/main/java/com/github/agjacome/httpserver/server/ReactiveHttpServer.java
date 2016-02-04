@@ -49,7 +49,7 @@ public final class ReactiveHttpServer implements Server, ServerCancelable {
     }
 
     @Override
-    public Observable<ServerRequest> observe() {
+    public Observable<ServerRequest> requests() {
         return Observable.create(subscriber -> {
             completeOnShutdown(subscriber);
             observers.add(request -> handleOnNext(request, subscriber));
@@ -94,8 +94,8 @@ public final class ReactiveHttpServer implements Server, ServerCancelable {
     ) {
         try {
             if (!subscriber.isUnsubscribed()) subscriber.onNext(request);
-        } catch (final Exception e) {
-            if (!subscriber.isUnsubscribed()) subscriber.onError(e);
+        } catch (final Throwable t) {
+            if (!subscriber.isUnsubscribed()) subscriber.onError(t);
         }
     }
 
