@@ -70,4 +70,26 @@ public final class StringContracts {
         );
     }
 
+    public static String requireNotSuffix(
+        final String     string,
+        final String     suffix,
+        final String     format,
+        final Object ... args
+    ) {
+        if (string.endsWith(suffix))
+            throw new IllegalArgumentException(String.format(format, args));
+
+        return string;
+    }
+
+    public static String requireNotSuffix(
+        final String string, final String suffix
+    ) {
+        return requireNotSuffix(
+            string, suffix,
+            "Expected string not ending with '%s', but '%s' given",
+            suffix, string
+        );
+    }
+
 }

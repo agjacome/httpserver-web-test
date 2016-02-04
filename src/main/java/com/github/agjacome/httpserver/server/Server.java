@@ -8,7 +8,7 @@ public interface Server {
 
     public ServerCancelable run();
 
-    public Server onRun(final Consumer<Server> consumer);
+    public Server afterRun(final Consumer<Server> consumer);
 
     public Observable<ServerRequest> requests();
 

@@ -34,7 +34,7 @@ public interface HttpStatusCode extends HttpResponseMatcher {
 
         public static Optional<StatusClass> of(final int code) {
             return EnumSet.allOf(StatusClass.class).stream().filter(
-              clazz -> clazz.getMinCode() >= code && clazz.getMaxCode() <= code
+              clazz -> code >= clazz.getMinCode() && code <= clazz.getMaxCode()
             ).findFirst();
         }
 

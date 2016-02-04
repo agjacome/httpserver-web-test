@@ -6,7 +6,7 @@ import java.util.function.Consumer;
 
 public interface ServerCancelable {
 
-    public ServerCancelable onShutdown(final Consumer<Server> consumer);
+    public ServerCancelable beforeShutdown(final Consumer<Server> consumer);
 
     public RunnableFuture<Void> shutdown();
 
@@ -16,7 +16,7 @@ public interface ServerCancelable {
 
     public default void awaitShutdown() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
-        onShutdown(s -> latch.countDown());
+        beforeShutdown(s -> latch.countDown());
         latch.await();
     }
 

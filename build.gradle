@@ -19,8 +19,9 @@ repositories {
 
 dependencies {
   compile 'io.reactivex:rxjava:1.1.+'
-  compile 'org.slf4j:slf4j-simple:1.7.+'
   compile 'com.github.jeremyh:jBCrypt:jbcrypt-0.4'
+
+  compile 'ch.qos.logback:logback-classic:1.1.+'
 
   testCompile 'junit:junit:4.12'
   testCompile 'com.pholser:junit-quickcheck-core:0.5'

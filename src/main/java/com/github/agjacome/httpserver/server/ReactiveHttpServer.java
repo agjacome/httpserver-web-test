@@ -1,6 +1,7 @@
 package com.github.agjacome.httpserver.server;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.FutureTask;
@@ -12,6 +13,8 @@ import com.sun.net.httpserver.HttpServer;
 
 import static java.util.Objects.requireNonNull;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 import rx.Observable;
 import rx.Subscriber;
 
@@ -21,8 +24,8 @@ public final class ReactiveHttpServer implements Server, ServerCancelable {
 
     private final List<ServerObserver> observers = new LinkedList<>();
 
-    private final List<Consumer<Server>> onStartConsumers = new LinkedList<>();
-    private final List<Consumer<Server>> onStopConsumers  = new LinkedList<>();
+    private final List<Consumer<Server>> afterRun       = new LinkedList<>();
+    private final List<Consumer<Server>> beforeShutdown = new LinkedList<>();
 
     public ReactiveHttpServer(
         final ServerConfiguration configuration
@@ -33,18 +36,20 @@ public final class ReactiveHttpServer implements Server, ServerCancelable {
         server.bind(configuration.getAddress(), configuration.getBacklog());
         server.setExecutor(configuration.getExecutor());
         server.createContext(configuration.getPath(), mainHandler());
+
+        setUpLogging(configuration.getAddress(), configuration.getPath());
     }
 
     @Override
-    public Server onRun(final Consumer<Server> consumer) {
-        onStartConsumers.add(consumer);
+    public Server afterRun(final Consumer<Server> consumer) {
+        afterRun.add(consumer);
         return this;
     }
 
     @Override
     public ServerCancelable run() {
-        onStartConsumers.forEach(c -> c.accept(this));
         server.start();
+        afterRun.forEach(c -> c.accept(this));
         return this;
     }
 
@@ -57,14 +62,14 @@ public final class ReactiveHttpServer implements Server, ServerCancelable {
     }
 
     @Override
-    public ServerCancelable onShutdown(final Consumer<Server> consumer) {
-        onStopConsumers.add(consumer);
+    public ServerCancelable beforeShutdown(final Consumer<Server> consumer) {
+        beforeShutdown.add(consumer);
         return this;
     }
 
     @Override
     public RunnableFuture<Void> shutdown() {
-        onStopConsumers.forEach(c -> c.accept(this));
+        beforeShutdown.forEach(c -> c.accept(this));
 
         return new FutureTask<>(() -> {
             server.stop(0);
@@ -73,17 +78,35 @@ public final class ReactiveHttpServer implements Server, ServerCancelable {
     }
 
 
+    private void setUpLogging(
+        final InetSocketAddress serverAddress, final String serverPath
+    ) {
+        afterRun(srv -> getLogger(getClass()).info(
+            "Service bound to {}:{} on {}",
+            serverAddress.getHostString(),
+            serverAddress.getPort(),
+            serverPath
+        ));
+
+        beforeShutdown(srv -> getLogger(getClass()).info(
+            "Stopping service bound to {}:{} on {}",
+            serverAddress.getHostString(),
+            serverAddress.getPort(),
+            serverPath
+        ));
+    }
+
     private HttpHandler mainHandler() {
         return exchange -> {
-            final ServerRequest r = new ReactiveHttpServerRequest(exchange);
-            observers.forEach(o -> o.handleRequest(r));
+            final ServerRequest req = new ReactiveHttpServerRequest(exchange);
+            observers.forEach(observer -> observer.handleRequest(req));
         };
     }
 
     private void completeOnShutdown(
         final Subscriber<? super ServerRequest> subscriber
     ) {
-        onShutdown(s -> {
+        beforeShutdown(s -> {
             if (!subscriber.isUnsubscribed()) subscriber.onCompleted();
         });
     }
@@ -95,6 +118,7 @@ public final class ReactiveHttpServer implements Server, ServerCancelable {
         try {
             if (!subscriber.isUnsubscribed()) subscriber.onNext(request);
         } catch (final Throwable t) {
+            getLogger(getClass()).error("Error on request handling", t);
             if (!subscriber.isUnsubscribed()) subscriber.onError(t);
         }
     }

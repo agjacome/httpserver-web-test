@@ -3,8 +3,8 @@ package com.github.agjacome.httpserver.server;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executor;
 
-import static java.util.Objects.requireNonNull;
-
+import static com.github.agjacome.httpserver.util.contract.NullContracts.requireAllNonNull;
+import static com.github.agjacome.httpserver.util.contract.StringContracts.requireNotSuffix;
 import static com.github.agjacome.httpserver.util.contract.StringContracts.requirePrefix;
 
 public final class ReactiveHttpServerConfiguration implements ServerConfiguration {
@@ -20,10 +20,13 @@ public final class ReactiveHttpServerConfiguration implements ServerConfiguratio
         final Executor          executor,
         final String            path
     ) {
-        this.address  = requireNonNull(address);
+        requireAllNonNull(address, executor, path);
+        requireNotSuffix(requirePrefix(path, "/"), "/");
+
+        this.address  = address;
         this.backlog  = backlog;
-        this.executor = requireNonNull(executor);
-        this.path     = requirePrefix(requireNonNull(path), "/");
+        this.executor = executor;
+        this.path     = path;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.github.agjacome.httpserver.server.http;
 
 import java.io.InputStream;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
@@ -30,6 +31,11 @@ public class HttpExchangeRequestAdapter implements HttpRequest {
     }
 
     @Override
+    public InetSocketAddress getRemoteAddress() {
+        return exchange.getRemoteAddress();
+    }
+
+    @Override
     public HttpMethod getMethod() {
         return StandardHttpMethod
               .of(exchange.getRequestMethod())
@@ -43,7 +49,12 @@ public class HttpExchangeRequestAdapter implements HttpRequest {
 
     @Override
     public String getPath() {
-        return Optional.ofNullable(getURI().getPath()).orElse("/");
+        final String base = exchange.getHttpContext().getPath();
+        final String path = getURI().getPath().substring(
+            base.equals("/") ? 0 : base.length()
+        );
+
+        return path.isEmpty() ? "/" : path;
     }
 
     @Override

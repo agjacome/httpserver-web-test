@@ -1,12 +1,15 @@
 package com.github.agjacome.httpserver.server.http;
 
 import java.io.InputStream;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.Optional;
 
 import com.github.agjacome.httpserver.util.CaseInsensitiveString;
 
 public interface HttpRequest {
+
+    public InetSocketAddress getRemoteAddress();
 
     public HttpMethod getMethod();
 
