@@ -119,7 +119,7 @@ public final class ReactiveHttpServer implements Server, ServerCancelable {
             if (!subscriber.isUnsubscribed()) subscriber.onNext(request);
         } catch (final Throwable t) {
             getLogger(getClass()).error("Error on request handling", t);
-            if (!subscriber.isUnsubscribed()) subscriber.onError(t);
+            // if (!subscriber.isUnsubscribed()) subscriber.onError(t);
         }
     }
 

@@ -12,15 +12,15 @@ import com.github.agjacome.httpserver.util.CaseInsensitiveString;
 
 public class InMemoryUserRepository extends InMemoryRepository<CaseInsensitiveString, User> implements UserRepository {
 
-    public static InMemoryUserRepository empty() {
+    public static UserRepository empty() {
         return of(Collections.emptyList());
     }
 
-    public static InMemoryUserRepository of(final User ... users) {
+    public static UserRepository of(final User ... users) {
         return of(Arrays.asList(users));
     }
 
-    public static InMemoryUserRepository of(final Collection<User> users) {
+    public static UserRepository of(final Collection<User> users) {
         return new InMemoryUserRepository(new LinkedHashSet<>(users));
     }
 

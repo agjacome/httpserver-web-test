@@ -15,6 +15,8 @@ public interface HttpRequest {
 
     public URI getURI();
 
+    public String getContextPath();
+
     public String getPath();
 
     public Optional<HttpQueryParameter> getQueryParameter(final String key);

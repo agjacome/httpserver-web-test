@@ -48,8 +48,13 @@ public class HttpExchangeRequestAdapter implements HttpRequest {
     }
 
     @Override
+    public String getContextPath() {
+        return exchange.getHttpContext().getPath();
+    }
+
+    @Override
     public String getPath() {
-        final String base = exchange.getHttpContext().getPath();
+        final String base = getContextPath();
         final String path = getURI().getPath().substring(
             base.equals("/") ? 0 : base.length()
         );

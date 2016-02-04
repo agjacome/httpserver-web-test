@@ -21,4 +21,12 @@ public interface ServerRequestFilter extends Predicate<ServerRequest>, Func1<Ser
         return matches(request);
     }
 
+    public default ServerRequestFilter or(final ServerRequestFilter that) {
+        return req -> this.matches(req) || that.matches(req);
+    }
+
+    public default ServerRequestFilter and(final ServerRequestFilter that) {
+        return req -> this.matches(req) && that.matches(req);
+    }
+
 }
