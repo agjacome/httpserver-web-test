@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Map;
 import java.util.Set;
 
 import com.github.agjacome.httpserver.model.User;
@@ -15,8 +16,11 @@ import static com.github.agjacome.httpserver.util.CaseInsensitiveString.uncased;
 
 public abstract class HtmlView implements View {
 
-    protected abstract String    getContent() throws IOException;
     protected abstract Set<Role> getRolesAllowed();
+
+    protected abstract String getContent(
+        final Map<String, String> values
+    ) throws IOException;
 
     @Override
     public boolean isAccessibleBy(final User user) {
@@ -29,14 +33,19 @@ public abstract class HtmlView implements View {
     }
 
     @Override
-    public long getContentLength() throws IOException {
-        return getContent().getBytes().length;
+    public long getContentLength(
+        final Map<String, String> values
+    ) throws IOException {
+        return getContent(values).getBytes().length;
     }
 
     @Override
-    public void writeView(final OutputStream stream) throws Exception {
+    public void render(
+        final Map<String, String> values,
+        final OutputStream stream
+    ) throws Exception {
         try (final Writer writer = new OutputStreamWriter(stream)) {
-            writer.append(getContent());
+            writer.append(getContent(values));
             writer.flush();
         }
     }
@@ -47,6 +56,12 @@ public abstract class HtmlView implements View {
 
     protected String getFooter() throws IOException {
         return Resources.readResourceAsString("view/footer.html");
+    }
+
+    protected String replaceTemplate(
+        final String page, final String key, final String value
+    ) {
+        return page.replace(String.format("${%s}", key.toUpperCase()), value);
     }
 
 }

@@ -13,7 +13,7 @@ import static java.lang.Runtime.getRuntime;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 import static com.github.agjacome.httpserver.Route.route;
-import static com.github.agjacome.httpserver.controller.LoginController.loginControler;
+import static com.github.agjacome.httpserver.controller.LoginGetController.loginGetController;
 import static com.github.agjacome.httpserver.server.filter.MethodFilter.method;
 import static com.github.agjacome.httpserver.server.filter.PathFilter.path;
 import static com.github.agjacome.httpserver.server.http.HttpMethod.StandardHttpMethod.GET;
@@ -26,14 +26,14 @@ public final class Main {
     );
 
     private static final Router router = Router.of(
-        route(method(GET).and(path("/login")), loginControler(loginView))
+        route(method(GET).and(path("/login")), loginGetController(loginView))
     );
 
     public static void main(final String[ ] args) {
         try {
 
           final Server server = new ReactiveHttpServer(config);
-          router.route(server);
+          router.enroute(server);
           runServer(server);
 
         } catch (final IOException ioe) {

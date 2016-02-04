@@ -25,7 +25,7 @@ public interface Route {
 
     public ServerRequestFilter filter();
 
-    public default void route(final Observable<ServerRequest> requests) {
+    public default void enroute(final Observable<ServerRequest> requests) {
         requests.filter(uncompleted.and(filter()))
                 .subscribe(controller());
     }

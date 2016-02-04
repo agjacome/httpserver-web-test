@@ -24,7 +24,7 @@ public final class RequestLogger implements ServerRequestEffect {
     public void effect(final ServerRequest request) {
         final HttpRequest req = request.getHttpRequest();
         logger.info(
-            "Connection established with {}:{} for {} -> {}",
+            "Connection established with {}:{} → {} {}",
             req.getRemoteAddress().getHostString(),
             req.getRemoteAddress().getPort(),
             req.getMethod().getName(),
