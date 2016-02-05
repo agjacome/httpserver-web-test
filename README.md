@@ -26,10 +26,10 @@ Construct JAR package and run it:
 
 ### Main example appplication
 
-The main example (see ```com.github.agjacome.httpserver.Main```) bounds the HTTP
+The main example (see ```com.github.agjacome.httpserver.Main```) binds the HTTP
 server to ```http://localhost:9000/httpserver```. The example application
 contains four pages besides login, logout and a simple index, and a total of
-six users with different roles to access these pages.
+six users with different roles to access those pages.
 
 ##### Users and Roles
 
