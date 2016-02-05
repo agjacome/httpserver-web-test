@@ -4,4 +4,4 @@ jdk: oraclejdk8
 
 script: ./gradlew build check --stacktrace --info
 
-# after_success: ./gradlew jacocoTestReport coveralls
+after_success: ./gradlew jacocoTestReport coveralls
