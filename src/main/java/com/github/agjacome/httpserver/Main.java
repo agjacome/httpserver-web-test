@@ -23,6 +23,7 @@ import static com.github.agjacome.httpserver.controller.IndexController.indexCon
 import static com.github.agjacome.httpserver.controller.LoginGetController.loginGetController;
 import static com.github.agjacome.httpserver.controller.LoginPostController.loginPostController;
 import static com.github.agjacome.httpserver.controller.LogoutController.logoutController;
+import static com.github.agjacome.httpserver.controller.PageController.pageController;
 import static com.github.agjacome.httpserver.model.User.Role.ADMIN;
 import static com.github.agjacome.httpserver.model.User.Role.PAGE_1;
 import static com.github.agjacome.httpserver.model.User.Role.PAGE_2;
@@ -36,6 +37,7 @@ import static com.github.agjacome.httpserver.util.BCryptPassword.encrypt;
 import static com.github.agjacome.httpserver.util.CaseInsensitiveString.uncased;
 import static com.github.agjacome.httpserver.view.IndexView.indexView;
 import static com.github.agjacome.httpserver.view.LoginView.loginView;
+import static com.github.agjacome.httpserver.view.PageView.pageView;
 
 public final class Main {
 
@@ -49,8 +51,7 @@ public final class Main {
         new User(uncased("page2" ), encrypt("page2pass" ), asSet(PAGE_2)),
         new User(uncased("page3" ), encrypt("page3pass" ), asSet(PAGE_3)),
         new User(uncased("page12"), encrypt("page12pass"), asSet(PAGE_1, PAGE_2)),
-        new User(uncased("page13"), encrypt("page13pass"), asSet(PAGE_1, PAGE_3)),
-        new User(uncased("page23"), encrypt("page23pass"), asSet(PAGE_2, PAGE_3))
+        new User(uncased("page13"), encrypt("page13pass"), asSet(PAGE_1, PAGE_3))
     );
 
     private static final SessionRepository sessions = InMemorySessionRepository.empty();
@@ -58,9 +59,16 @@ public final class Main {
 
     private static final Router router = Router.of(
         route(method(GET ).and(path("/?"     )), indexController(indexView)),
+
         route(method(GET ).and(path("/login" )), loginGetController(loginView, sessions)),
         route(method(POST).and(path("/login" )), loginPostController(users, sessions, sessionDuration)),
-        route(method(GET ).and(path("/logout")), logoutController(sessions))
+        route(method(GET ).and(path("/logout")), logoutController(sessions)),
+
+        route(method(GET ).and(path("/page_1")), pageController(pageView("Page 1", PAGE_1), sessions)),
+        route(method(GET ).and(path("/page_2")), pageController(pageView("Page 3", PAGE_2), sessions)),
+        route(method(GET ).and(path("/page_3")), pageController(pageView("Page 3", PAGE_3), sessions)),
+
+        route(method(GET ).and(path("/page_23")), pageController(pageView("Page 2-3", PAGE_2, PAGE_3), sessions))
     );
 
     public static void main(final String[ ] args) {

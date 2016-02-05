@@ -9,7 +9,7 @@ import java.util.StringJoiner;
 import com.github.agjacome.httpserver.model.User.Role;
 import com.github.agjacome.httpserver.util.Resources;
 
-public class LoginView extends HtmlView {
+public final class LoginView extends HtmlView {
 
     public static final View loginView = new LoginView();
 

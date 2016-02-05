@@ -9,7 +9,7 @@ import java.util.StringJoiner;
 import com.github.agjacome.httpserver.model.User.Role;
 import com.github.agjacome.httpserver.util.Resources;
 
-public class NotFoundView extends HtmlView {
+public final class NotFoundView extends HtmlView {
 
     public static final View notFoundView = new NotFoundView();
 

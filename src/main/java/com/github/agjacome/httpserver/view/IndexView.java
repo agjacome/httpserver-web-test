@@ -9,7 +9,7 @@ import java.util.StringJoiner;
 import com.github.agjacome.httpserver.model.User.Role;
 import com.github.agjacome.httpserver.util.Resources;
 
-public class IndexView extends HtmlView {
+public final class IndexView extends HtmlView {
 
     public static View indexView = new IndexView();
 
