@@ -1,8 +1,13 @@
 package com.github.agjacome.httpserver.controller;
 
+import java.util.Map;
+import java.util.Optional;
+
 import com.github.agjacome.httpserver.server.ServerRequest;
 import com.github.agjacome.httpserver.server.action.ServerRequestEffect;
 import com.github.agjacome.httpserver.server.http.HttpHeader;
+import com.github.agjacome.httpserver.server.http.HttpQueryParameter;
+import com.github.agjacome.httpserver.server.http.HttpRequest;
 
 import static com.github.agjacome.httpserver.util.CaseInsensitiveString.uncased;
 
@@ -35,10 +40,23 @@ public abstract class Controller implements ServerRequestEffect {
         final ServerRequest request
     ) throws Exception;
 
-    protected final HttpHeader header(
+    protected HttpHeader header(
         final String key, final String ... values
     ) {
         return new HttpHeader(uncased(key), values);
+    }
+
+    protected Optional<String> getFirstParamFor(
+        final String name, final HttpRequest request
+    ) {
+        return request.getQueryParameter(name).flatMap(p -> p.getFirst());
+    }
+
+    protected Optional<String> getFirstParamFor(
+        final String name,
+        final Map<String, HttpQueryParameter> params
+    ) {
+        return Optional.ofNullable(params.get(name)).flatMap(p -> p.getFirst());
     }
 
 }

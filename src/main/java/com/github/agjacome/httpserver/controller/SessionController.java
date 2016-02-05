@@ -1,11 +1,14 @@
 package com.github.agjacome.httpserver.controller;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import com.github.agjacome.httpserver.model.Session;
+import com.github.agjacome.httpserver.model.User;
 import com.github.agjacome.httpserver.model.repository.SessionRepository;
+import com.github.agjacome.httpserver.model.repository.exception.EntityDoesNotExistException;
 import com.github.agjacome.httpserver.model.repository.exception.RepositoryException;
 import com.github.agjacome.httpserver.server.http.HttpHeader;
 import com.github.agjacome.httpserver.server.http.HttpRequest;
@@ -15,33 +18,27 @@ import static java.time.Instant.now;
 import static java.time.ZoneOffset.UTC;
 import static java.time.format.DateTimeFormatter.RFC_1123_DATE_TIME;
 import static java.util.Objects.requireNonNull;
+import static java.util.UUID.randomUUID;
 
 import static com.github.agjacome.httpserver.util.CaseInsensitiveString.uncased;
 
-abstract class AuthorizationController extends Controller {
+abstract class SessionController extends Controller {
 
-    private final SessionRepository sessions;
+    protected final SessionRepository sessions;
 
-    protected AuthorizationController(final SessionRepository sessions) {
+    protected SessionController(final SessionRepository sessions) {
         this.sessions = requireNonNull(sessions);
     }
 
-    protected Optional<Session> updateSession(final Session session) {
-        try {
-
-            if (session.hasExpired()) {
-                sessions.delete(session);
-                return Optional.empty();
-            }
-
-            return Optional.of(sessions.update(session.withInstant(now())));
-
-        } catch (final RepositoryException re) {
-            return Optional.empty();
-        }
+    protected HttpHeader createSession(
+        final User user, final Duration duration
+    ) {
+        return createSession(sessions.create(
+            new Session(randomUUID(), user, now(), duration)
+        ));
     }
 
-    protected HttpHeader createSessionHeader(final Session session) {
+    protected HttpHeader createSession(final Session session) {
         final String uuid    = session.getId().toString();
         final String expires = session.getInstant().plus(session.getDuration())
                               .atOffset(UTC).format(RFC_1123_DATE_TIME);
@@ -52,7 +49,17 @@ abstract class AuthorizationController extends Controller {
         );
     }
 
-    protected HttpHeader unsetSessionHeader() {
+    protected HttpHeader destroySession(final Session session) {
+        try {
+            sessions.delete(session);
+        } catch (final EntityDoesNotExistException ednee) {
+            // do nothing
+        }
+
+        return destroySession();
+    }
+
+    protected HttpHeader destroySession() {
         final String expires = EPOCH.atOffset(UTC).format(RFC_1123_DATE_TIME);
 
         return header(
@@ -72,6 +79,18 @@ abstract class AuthorizationController extends Controller {
         return getSessionValue(values).flatMap(sessions::get);
     }
 
+    protected Optional<Session> updateSession(final Session session) {
+        try {
+            if (session.hasExpired()) {
+                sessions.delete(session);
+                return Optional.empty();
+            }
+            return Optional.of(sessions.update(session.withInstant(now())));
+        } catch (final RepositoryException re) {
+            return Optional.empty();
+        }
+    }
+
 
     private Optional<UUID> getSessionValue(final List<String> values) {
         // TODO: refactor
@@ -82,7 +101,7 @@ abstract class AuthorizationController extends Controller {
                 final String[] keyValue = component.trim().split("=");
 
                     if (keyValue.length == 2 && keyValue[0].trim().equals("session"))
-                        return parseUUID(keyValue[0]);
+                        return parseUUID(keyValue[1]);
             }
         }
 

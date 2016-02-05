@@ -18,15 +18,12 @@ import com.github.agjacome.httpserver.server.http.HttpQueryParameter;
 import com.github.agjacome.httpserver.server.http.HttpRequest;
 import com.github.agjacome.httpserver.server.http.HttpResponseBuilder;
 
-import static java.time.Instant.now;
 import static java.util.Objects.requireNonNull;
-import static java.util.Optional.ofNullable;
-import static java.util.UUID.randomUUID;
 
 import static com.github.agjacome.httpserver.server.http.HttpStatusCode.StandardHttpStatusCode.FOUND;
 import static com.github.agjacome.httpserver.util.CaseInsensitiveString.uncased;
 
-public class LoginPostController extends AuthorizationController {
+public final class LoginPostController extends SessionController {
 
     private final UserRepository users;
     private final Duration       sessionDuration;
@@ -54,15 +51,14 @@ public class LoginPostController extends AuthorizationController {
     protected void handleRequest(final ServerRequest request) throws Exception {
         final HttpRequest req = request.getHttpRequest();
 
-        final Map<String, HttpQueryParameter> params  = parsePostParams(req);
-        final HttpHeader redirect = header(
-            "Location", getRedirectLocation(req, params)
-        );
+        final Map<String, HttpQueryParameter> params = parsePostParams(req);
 
-        final Optional<Session> session = getSession(req);
+        final Optional<Session> session  = getSession(req);
+        final HttpHeader        location = getLocation(req, params);
+
         final HttpResponseBuilder response = session.isPresent()
-                ? onSessionIsPresent(session.get(), request, redirect)
-                : onValidUser(getValidatedUser(params), request, redirect);
+            ? onSessionIsPresent(session.get(), request, location)
+            : onSessionNotPresent(validateUserFrom(params), request, location);
 
         response.build();
         request.complete();
@@ -71,34 +67,34 @@ public class LoginPostController extends AuthorizationController {
     private HttpResponseBuilder onSessionIsPresent(
         final Session       session,
         final ServerRequest request,
-        final HttpHeader    redirect
+        final HttpHeader    location
     ) throws IOException {
         final HttpResponseBuilder response = request.getHttpResponseBuilder();
         final Optional<Session>   updated  = updateSession(session);
 
         if (updated.isPresent()) {
             response.withStatusCode(FOUND);
-            response.withHeader(redirect);
+            response.withHeader(location);
         } else {
              response.withStatusCode(FOUND);
-             response.withHeader(unsetSessionHeader());
+             response.withHeader(destroySession());
              response.withHeader(header("Location", request.getHttpRequest().getURI().toString()));
         }
 
         return response;
     }
 
-    private HttpResponseBuilder onValidUser(
+    private HttpResponseBuilder onSessionNotPresent(
         final Optional<User> user,
         final ServerRequest  request,
-        final HttpHeader     redirect
+        final HttpHeader     location
     ) throws IOException {
         final HttpResponseBuilder response = request.getHttpResponseBuilder();
 
         if (user.isPresent()) {
            response.withStatusCode(FOUND);
-           response.withHeader(redirect);
-           response.withHeader(session(user.get()));
+           response.withHeader(location);
+           response.withHeader(createSession(user.get(), sessionDuration));
         } else {
             response.withStatusCode(FOUND);
             response.withHeader(header("Location", request.getHttpRequest().getURI().toString()));
@@ -107,22 +103,12 @@ public class LoginPostController extends AuthorizationController {
         return response;
     }
 
-    private HttpHeader session(final User user) {
-        return createSessionHeader(new Session(
-            randomUUID(), user, now(), sessionDuration
-        ));
-    }
 
-    private Optional<User> getValidatedUser(
+    private Optional<User> validateUserFrom(
         final Map<String, HttpQueryParameter> params
     ) {
-        final Optional<String> username = ofNullable(params.get("username"))
-                .filter(p -> !p.getValues().isEmpty())
-                .map(p -> p.getValues().get(0));
-
-        final Optional<String> password = ofNullable(params.get("password"))
-                .filter(p -> !p.getValues().isEmpty())
-                .map(p -> p.getValues().get(0));
+        final Optional<String> username = getFirstParamFor("username", params);
+        final Optional<String> password = getFirstParamFor("password", params);
 
         if (!username.isPresent() || !password.isPresent())
             return Optional.empty();
@@ -131,16 +117,12 @@ public class LoginPostController extends AuthorizationController {
               .filter(u -> u.checkPassword(password.get()));
     }
 
-    private String getRedirectLocation(
+    private HttpHeader getLocation(
         final HttpRequest request,
         final Map<String, HttpQueryParameter> params
     ) throws IOException {
-        final String redirect = ofNullable(params.get("redirect"))
-             .filter(p -> !p.getValues().isEmpty())
-             .map(p -> p.getValues().get(0))
-             .orElse("");
-
-        return request.getContextPath() + "/" + redirect;
+        final String location = getFirstParamFor("redirect", params).orElse("");
+        return header("Location", request.getContextPath() + "/" + location);
     }
 
     private Map<String, HttpQueryParameter> parsePostParams(
@@ -152,9 +134,7 @@ public class LoginPostController extends AuthorizationController {
 
         if (!urlEncoded.matches(request)) return Collections.emptyMap();
 
-        try (final BufferedReader reader = new BufferedReader(
-                new InputStreamReader(request.getBodyInputStream())
-        )) {
+        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(request.getBodyInputStream()))) {
             final String firstLine = reader.readLine();
             return HttpQueryParameter.parseQueryParams(firstLine);
         }

@@ -8,7 +8,7 @@ import static java.util.Objects.requireNonNull;
 
 import static com.github.agjacome.httpserver.server.http.HttpStatusCode.StandardHttpStatusCode.OK;
 
-public class IndexController extends Controller {
+public final class IndexController extends Controller {
 
     private final View view;
 

@@ -22,6 +22,7 @@ import static com.github.agjacome.httpserver.Route.route;
 import static com.github.agjacome.httpserver.controller.IndexController.indexController;
 import static com.github.agjacome.httpserver.controller.LoginGetController.loginGetController;
 import static com.github.agjacome.httpserver.controller.LoginPostController.loginPostController;
+import static com.github.agjacome.httpserver.controller.LogoutController.logoutController;
 import static com.github.agjacome.httpserver.model.User.Role.ADMIN;
 import static com.github.agjacome.httpserver.model.User.Role.PAGE_1;
 import static com.github.agjacome.httpserver.model.User.Role.PAGE_2;
@@ -56,9 +57,10 @@ public final class Main {
     private static final Duration sessionDuration = Duration.ofMinutes(5);
 
     private static final Router router = Router.of(
-        route(method(GET ).and(path("/?"))    , indexController(indexView)),
-        route(method(GET ).and(path("/login")), loginGetController(loginView)),
-        route(method(POST).and(path("/login")), loginPostController(users, sessions, sessionDuration))
+        route(method(GET ).and(path("/?"     )), indexController(indexView)),
+        route(method(GET ).and(path("/login" )), loginGetController(loginView, sessions)),
+        route(method(POST).and(path("/login" )), loginPostController(users, sessions, sessionDuration)),
+        route(method(GET ).and(path("/logout")), logoutController(sessions))
     );
 
     public static void main(final String[ ] args) {
