@@ -15,6 +15,8 @@ import static java.util.Objects.requireNonNull;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+import static com.github.agjacome.httpserver.server.http.HttpStatusCode.StandardHttpStatusCode.INTERNAL_SERVER_ERROR;
+
 import rx.Observable;
 import rx.Subscriber;
 
@@ -119,7 +121,19 @@ public final class ReactiveHttpServer implements Server, ServerCancelable {
             if (!subscriber.isUnsubscribed()) subscriber.onNext(request);
         } catch (final Throwable t) {
             getLogger(getClass()).error("Error on request handling", t);
-            // if (!subscriber.isUnsubscribed()) subscriber.onError(t);
+            onServerError(request);
+        }
+    }
+
+    private void onServerError(final ServerRequest request) {
+        try {
+            request.getHttpResponseBuilder()
+                   .withStatusCode(INTERNAL_SERVER_ERROR)
+                   .build();
+
+            request.complete();
+        } catch (final IOException ioe) {
+            getLogger(getClass()).error("Error building server-error response", ioe);
         }
     }
 

@@ -20,7 +20,7 @@ public class HttpExchangeResponseAdapter implements HttpResponse {
 
     HttpExchangeResponseAdapter(final HttpExchange exchange) {
         this.exchange = requireNonNull(exchange);
-        this.headers  = parseHeaders(exchange, HttpExchange::getResponseHeaders);
+        this.headers  = parseHeaders(exchange.getResponseHeaders());
     }
 
     @Override

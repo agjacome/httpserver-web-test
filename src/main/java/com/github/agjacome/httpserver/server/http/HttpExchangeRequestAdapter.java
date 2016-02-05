@@ -26,8 +26,8 @@ public class HttpExchangeRequestAdapter implements HttpRequest {
     public HttpExchangeRequestAdapter(final HttpExchange exchange) {
         this.exchange = requireNonNull(exchange);
 
-        this.params   = parseQueryParams(exchange);
-        this.headers  = parseHeaders(exchange, HttpExchange::getRequestHeaders);
+        this.params  = parseQueryParams(exchange.getRequestURI().getQuery());
+        this.headers = parseHeaders(exchange.getRequestHeaders());
     }
 
     @Override

@@ -19,13 +19,13 @@ public final class URIs {
     @DisallowConstruction
     private URIs() { }
 
-    public static Map<String, List<String>> parseParams(final URI uri) {
-        if (isNull(uri.getQuery())) return Collections.emptyMap();
+    public static Map<String, List<String>> parseParams(final String query) {
+        if (isNull(query)) return Collections.emptyMap();
 
         final Map<String, List<String>> params = new LinkedHashMap<>();
 
         // TODO: refactor to use StringTokenizer instead of direct "split"
-        for (final String pair : uri.getQuery().split("&")) {
+        for (final String pair : query.split("&")) {
             final int index = pair.indexOf("=");
 
             final String key = index > 0 ? decodeURLtoUTF8(pair.substring(0, index)) : pair;
@@ -39,6 +39,10 @@ public final class URIs {
         }
 
         return params;
+    }
+
+    public static Map<String, List<String>> parseParams(final URI uri) {
+        return parseParams(uri.getQuery());
     }
 
     public static String encodeUTF8toURL(final String str) {

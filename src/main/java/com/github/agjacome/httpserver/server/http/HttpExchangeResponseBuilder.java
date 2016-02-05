@@ -48,8 +48,6 @@ public final class HttpExchangeResponseBuilder implements HttpResponseBuilder {
 
     @Override
     public HttpResponse build() throws IOException {
-        exchange.sendResponseHeaders(code.getCode(), length);
-
         headers.values().forEach(header -> {
             final String       key    = header.getKey().getOriginal();
             final List<String> values = header.getValues();
@@ -57,6 +55,7 @@ public final class HttpExchangeResponseBuilder implements HttpResponseBuilder {
             exchange.getResponseHeaders().put(key, values);
         });
 
+        exchange.sendResponseHeaders(code.getCode(), length);
         return new HttpExchangeResponseAdapter(exchange);
     }
 

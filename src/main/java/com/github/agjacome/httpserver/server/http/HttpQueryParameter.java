@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.agjacome.httpserver.util.URIs;
-import com.sun.net.httpserver.HttpExchange;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.nonNull;
@@ -20,11 +19,11 @@ public final class HttpQueryParameter implements HttpRequestMatcher, Iterable<St
     private final List<String> values;
 
     public static Map<String, HttpQueryParameter> parseQueryParams(
-        final HttpExchange exchange
+        final String rawQuery
     ) {
         final Map<String, HttpQueryParameter> params = new LinkedHashMap<>();
 
-        URIs.parseParams(requireNonNull(exchange).getRequestURI()).forEach(
+        URIs.parseParams(rawQuery).forEach(
             (k, vs) -> params.put(k, new HttpQueryParameter(k, vs))
         );
 

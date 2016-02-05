@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
 
+import static java.time.Instant.now;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 
@@ -49,6 +50,10 @@ public class Session implements Entity<UUID> {
 
     public Session withDuration(final Duration duration) {
         return new Session(uuid, user, instant, duration);
+    }
+
+    public boolean hasExpired() {
+        return instant.plus(duration).isBefore(now());
     }
 
     @Override

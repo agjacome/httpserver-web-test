@@ -9,17 +9,20 @@ import com.github.agjacome.httpserver.view.View;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonMap;
+import static java.util.Objects.requireNonNull;
 
 import static com.github.agjacome.httpserver.server.http.HttpStatusCode.StandardHttpStatusCode.OK;
 
-public class LoginGetController extends ViewController {
+public class LoginGetController extends Controller {
+
+    private final View view;
 
     public static Controller loginGetController(final View view) {
         return new LoginGetController(view);
     }
 
     public LoginGetController(final View view) {
-        super(view);
+        this.view = requireNonNull(view);
     }
 
     @Override
