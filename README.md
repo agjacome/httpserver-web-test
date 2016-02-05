@@ -1,7 +1,8 @@
 HttpServer web test
 ===================
 
-[![Build Status](https://travis-ci.com/agjacome/httpserver-web-test.svg?token=sFBy6axaUDC46XFWpQ1Z)](https://travis-ci.com/agjacome/httpserver-web-test)
+[![Build Status](https://travis-ci.org/agjacome/httpserver-web-test.svg)](https://travis-ci.org/agjacome/httpserver-web-test)
+[![Coverage Status](https://coveralls.io/repos/github/agjacome/httpserver-web-test/badge.svg)](https://coveralls.io/github/agjacome/httpserver-web-test)
 [![MIT License](https://img.shields.io/badge/license-MIT-orange.svg)](https://github.com/agjacome/httpserver-web-test/blob/master/LICENSE.md)
 [![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
 
