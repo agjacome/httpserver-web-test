@@ -36,7 +36,8 @@ public final class PageController extends SessionController {
 
     @Override
     protected void handleRequest(final ServerRequest request) throws Exception {
-        final Optional<Session> session = getSession(request.getHttpRequest());
+        final Optional<Session> session = getSession(request.getHttpRequest())
+                                         .flatMap(this::updateSession);
 
         if (!session.isPresent())
             onSessionNotPresent(request);
