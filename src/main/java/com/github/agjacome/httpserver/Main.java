@@ -58,17 +58,17 @@ public final class Main {
     private static final Duration sessionDuration = Duration.ofMinutes(5);
 
     private static final Router router = Router.of(
-        route(method(GET ).and(path("/?"     )), indexController(indexView)),
+        route(method(GET).and(path("/?")), indexController(indexView)),
 
         route(method(GET ).and(path("/login" )), loginGetController(loginView, sessions)),
         route(method(POST).and(path("/login" )), loginPostController(users, sessions, sessionDuration)),
         route(method(GET ).and(path("/logout")), logoutController(sessions)),
 
-        route(method(GET ).and(path("/page_1")), pageController(pageView("Page 1", PAGE_1), sessions)),
-        route(method(GET ).and(path("/page_2")), pageController(pageView("Page 3", PAGE_2), sessions)),
-        route(method(GET ).and(path("/page_3")), pageController(pageView("Page 3", PAGE_3), sessions)),
+        route(method(GET).and(path("/page_1")), pageController(pageView("Page 1", PAGE_1), sessions)),
+        route(method(GET).and(path("/page_2")), pageController(pageView("Page 3", PAGE_2), sessions)),
+        route(method(GET).and(path("/page_3")), pageController(pageView("Page 3", PAGE_3), sessions)),
 
-        route(method(GET ).and(path("/page_23")), pageController(pageView("Page 2-3", PAGE_2, PAGE_3), sessions))
+        route(method(GET).and(path("/page_23")), pageController(pageView("Page 2-3", PAGE_2, PAGE_3), sessions))
     );
 
     public static void main(final String[ ] args) {

@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.github.agjacome.httpserver.util.CaseInsensitiveString;
 
@@ -60,6 +61,10 @@ public final class HttpHeader implements HttpRequestMatcher, Iterable<String> {
 
     public CaseInsensitiveString getKey() {
         return key;
+    }
+
+    public Optional<String> getFirst() {
+        return values.isEmpty() ? Optional.empty() : Optional.of(values.get(0));
     }
 
     public List<String> getValues() {
